@@ -1,5 +1,6 @@
 package com.assignments.currencyexchangerates.ui.viewmodel
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,29 +15,46 @@ class ExchangeRateViewModel : ViewModel() {
     private var repository: ExchangeRateRepository =
         ExchangeRateRepository(ExchangeRateDataSource())
 
+    private lateinit var responseModel: ResponseModel
+
     // api response live data
     val apiCallBackLiveData: MutableLiveData<Result<HashMap<String, Float>>> = MutableLiveData()
 
     fun getExchangeRateData(
         selectedDate: String,
         startDate: String,
-        endDate: String
+        endDate: String,
+        syncAgain: Boolean = false
     ) {
-        repository.getExchangeRatesBasedOnDateRange(
-            startDate,
-            endDate,
-            "USD",
-            { disposable ->
+        if (this::responseModel.isInitialized && !syncAgain) {
+            setResponseData(responseModel, selectedDate)
+        } else {
+            repository.getExchangeRatesBasedOnDateRange(
+                startDate,
+                endDate,
+                "USD",
+                { disposable ->
 
-            }, { response ->
-                if (response is Result.Success) {
-                    val responseModel = response.data
-                    val selectedDatesData = responseModel?.rates?.get(selectedDate)
-                    apiCallBackLiveData.value = Result.Success(selectedDatesData)
-                } else if (response is Result.Error) {
-                    apiCallBackLiveData.value = response
-                }
-            })
+                }, { response ->
+                    if (response is Result.Success) {
+                        response.data?.let {
+                            responseModel = it
+                            setResponseData(it, "")
+                        }
+                    } else if (response is Result.Error) {
+                        apiCallBackLiveData.value = response
+                    }
+                })
+        }
+    }
+
+    private fun setResponseData(responseData: ResponseModel, selectedDate: String) {
+        var selectedDatesData: HashMap<String, Float>? = null
+        if (!TextUtils.isEmpty(selectedDate))
+        selectedDatesData = responseData.rates?.get(selectedDate)
+        else
+            selectedDatesData = responseData.rates?.get(responseData.rates?.keys?.first())
+        apiCallBackLiveData.value = Result.Success(selectedDatesData)
     }
 
 }

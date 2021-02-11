@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#000000</color>
+    <color name="textColor">#FFFFFF</color>
+    <color name="iconColor">#FFFFFF</color>
+    <color name="iconColorReverse">#000000</color>
+    <color name="viewBack">#301934</color>
+    <color name="viewBaseBack">#121212</color>
+</resources>
