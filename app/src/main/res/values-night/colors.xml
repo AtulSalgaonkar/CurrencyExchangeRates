@@ -2,6 +2,7 @@
 <resources>
     <color name="background">#000000</color>
     <color name="textColor">#FFFFFF</color>
+    <color name="textColorReverse">#000000</color>
     <color name="iconColor">#FFFFFF</color>
     <color name="iconColorReverse">#000000</color>
     <color name="viewBack">#301934</color>
