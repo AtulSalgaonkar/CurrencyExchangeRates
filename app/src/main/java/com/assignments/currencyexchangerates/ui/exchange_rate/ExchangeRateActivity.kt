@@ -22,9 +22,10 @@ class ExchangeRateActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityExchangeRateBinding
     private lateinit var viewModel: ExchangeRateViewModel
-    private val TAG = ExchangeRateActivity::class.java.simpleName
     private lateinit var adapter: RvGridAdapter
     private lateinit var dpd: DatePickerDialog
+    private val START_DATE_STR = "2018-01-01"
+    private val END_DATE_STR = "2018-09-01"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,15 @@ class ExchangeRateActivity : AppCompatActivity() {
             1,
             1
         )
+
+        val dateStart: Date? = getDateFromString(START_DATE_STR)
+        val dateEnd: Date? = getDateFromString(END_DATE_STR)
+        dateStart?.let {
+            dpd.datePicker.minDate = it.time
+        }
+        dateEnd?.let {
+            dpd.datePicker.maxDate = it.time
+        }
     }
 
     private fun initObserver() {
@@ -74,7 +84,7 @@ class ExchangeRateActivity : AppCompatActivity() {
                 if (resultData.data == null) {
                     binding.statusTv.text = getString(R.string.no_record_found)
                     binding.statusView.visibility = View.VISIBLE
-                    binding.retryBtn.visibility = View.VISIBLE
+                    binding.retryBtn.visibility = View.GONE
                     binding.recyclerView.visibility = View.GONE
                 } else {
                     adapter.setData(convertData(resultData.data))
@@ -91,8 +101,7 @@ class ExchangeRateActivity : AppCompatActivity() {
         }
 
         viewModel.dateChangeLiveData.observe(this) { dateString ->
-            val format: DateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val date: Date? = format.parse(dateString)
+            val date: Date? = getDateFromString(dateString)
             val calDate = Calendar.getInstance()
             date?.let {
                 calDate.time = it
@@ -104,6 +113,12 @@ class ExchangeRateActivity : AppCompatActivity() {
                 fetchData(dateString, false)
             }
         }
+    }
+
+    private fun getDateFromString(dateString: String): Date? {
+        val format: DateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date: Date? = format.parse(dateString)
+        return date
     }
 
     private fun convertData(rateData: HashMap<String, Float>): ArrayList<ExchangeRate> {
@@ -118,8 +133,8 @@ class ExchangeRateActivity : AppCompatActivity() {
     private fun fetchData(selectedDateStr: String, syncAgain: Boolean = false) {
         viewModel.getExchangeRateData(
             selectedDate = selectedDateStr,
-            "2018-01-01",
-            "2018-09-01",
+            START_DATE_STR,
+            END_DATE_STR,
             syncAgain
         )
     }
