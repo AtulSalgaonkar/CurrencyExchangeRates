@@ -9,4 +9,5 @@
     <string name="validate_login">Email ID or Password is invalid!</string>
     <string name="password_validation">Password can\'t be empty</string>
     <string name="email_validation">Email can\'t be empty</string>
+    <string name="date">Date</string>
 </resources>
