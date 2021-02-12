@@ -17,6 +17,7 @@ class ExchangeRateViewModel : ViewModel() {
 
     // api response live data
     val apiCallBackLiveData: MutableLiveData<Result<HashMap<String, Float>>> = MutableLiveData()
+    // date change live data
     val dateChangeLiveData: MutableLiveData<String> = MutableLiveData()
 
     fun getExchangeRateData(

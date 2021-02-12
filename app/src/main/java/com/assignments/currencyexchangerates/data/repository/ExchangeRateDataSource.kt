@@ -1,7 +1,5 @@
 package com.assignments.currencyexchangerates.data.repository
 
-import android.content.Context
-import com.assignments.currencyexchangerates.BaseApplication
 import com.assignments.currencyexchangerates.data.model.ResponseModel
 import com.assignments.currencyexchangerates.data.remote.APIClient
 import com.assignments.currencyexchangerates.data.remote.api.APIService
@@ -10,7 +8,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import com.assignments.currencyexchangerates.data.model.Result
-import retrofit2.Call
 
 class ExchangeRateDataSource(
     var apiService: APIService = APIClient.getClient

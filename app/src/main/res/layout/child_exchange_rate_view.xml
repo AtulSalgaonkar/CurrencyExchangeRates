@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardUseCompatPadding="true"
-    app:rippleColor="@color/purple_200"
+    app:rippleColor="@color/red_200"
     tools:context=".ui.adapter.RvGridAdapter">
 
     <LinearLayout
