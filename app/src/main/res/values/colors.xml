@@ -13,4 +13,6 @@
     <color name="viewBack">#f5f5f5</color>
     <color name="viewBaseBack">#f5f5f5</color>
     <color name="textColor">#000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="defaultGrayColor3">#E0E0E0</color>
 </resources>

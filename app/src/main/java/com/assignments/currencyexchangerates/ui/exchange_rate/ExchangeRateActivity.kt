@@ -13,6 +13,8 @@ import com.assignments.currencyexchangerates.data.model.Result
 import com.assignments.currencyexchangerates.databinding.ActivityExchangeRateBinding
 import com.assignments.currencyexchangerates.ui.adapter.RvGridAdapter
 import com.assignments.currencyexchangerates.ui.viewmodel.ExchangeRateViewModel
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -22,6 +24,7 @@ class ExchangeRateActivity : AppCompatActivity() {
     private lateinit var viewModel: ExchangeRateViewModel
     private val TAG = ExchangeRateActivity::class.java.simpleName
     private lateinit var adapter: RvGridAdapter
+    private lateinit var dpd: DatePickerDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,20 +41,31 @@ class ExchangeRateActivity : AppCompatActivity() {
             fetchData("", true)
         }
 
-        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view2, thisYear, thisMonth, thisDay ->
-            // Display Selected date in textbox
-            thisAMonth = thisMonth + 1
-            thisADay = thisDay
-            thisAYear = thisYear
-
-            statusDateID.setText("Date: " + thisAMonth + "/" + thisDay + "/" + thisYear)
-            val newDate:Calendar =Calendar.getInstance()
-            newDate.set(thisYear, thisMonth, thisDay)
-            mh.entryDate = newDate.timeInMillis // setting new date
-        }, thisAYear, thisAMonth, thisADay)
-        dpd.show()
+        binding.dateEt.setOnClickListener {
+            dpd.show()
+        }
 
         fetchData("", true)
+
+        dpd = DatePickerDialog(
+            this,
+            { _, thisYear, thisMonth, thisDay ->
+                val thisMonthVal = thisMonth + 1
+                var thisDayStr = thisDay.toString()
+                if (thisDay.toString().length == 1) {
+                    thisDayStr = "0$thisDay"
+                }
+                var thisMonthValStr = thisMonthVal.toString()
+                if (thisMonthVal.toString().length == 1) {
+                    thisMonthValStr = "0$thisMonthVal"
+                }
+                val dateStr = "$thisYear-$thisMonthValStr-$thisDayStr"
+                viewModel.dateChangeLiveData.value = dateStr
+            },
+            2018,
+            1,
+            1
+        )
     }
 
     private fun initObserver() {
@@ -75,6 +89,21 @@ class ExchangeRateActivity : AppCompatActivity() {
                 binding.recyclerView.visibility = View.GONE
             }
         }
+
+        viewModel.dateChangeLiveData.observe(this) { dateString ->
+            val format: DateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val date: Date? = format.parse(dateString)
+            val calDate = Calendar.getInstance()
+            date?.let {
+                calDate.time = it
+                val year: Int = calDate.get(Calendar.YEAR)
+                val month: Int = calDate.get(Calendar.MONTH)
+                val day: Int = calDate.get(Calendar.DAY_OF_MONTH)
+                dpd.updateDate(year, month, day)
+                binding.dateEt.setText(dateString)
+                fetchData(dateString, false)
+            }
+        }
     }
 
     private fun convertData(rateData: HashMap<String, Float>): ArrayList<ExchangeRate> {
@@ -86,7 +115,7 @@ class ExchangeRateActivity : AppCompatActivity() {
         return data
     }
 
-    private fun fetchData(selectedDateStr : String, syncAgain: Boolean = false) {
+    private fun fetchData(selectedDateStr: String, syncAgain: Boolean = false) {
         viewModel.getExchangeRateData(
             selectedDate = selectedDateStr,
             "2018-01-01",
@@ -98,8 +127,10 @@ class ExchangeRateActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         adapter = RvGridAdapter()
         binding.recyclerView.itemAnimator = DefaultItemAnimator()
-        binding.recyclerView.layoutManager = GridLayoutManager(this,
-            resources.getInteger(R.integer.number_of_grid_items))
+        binding.recyclerView.layoutManager = GridLayoutManager(
+            this,
+            resources.getInteger(R.integer.number_of_grid_items)
+        )
         binding.recyclerView.adapter = adapter
     }
 }

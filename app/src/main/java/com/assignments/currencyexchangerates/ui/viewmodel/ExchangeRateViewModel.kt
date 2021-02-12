@@ -19,6 +19,7 @@ class ExchangeRateViewModel : ViewModel() {
 
     // api response live data
     val apiCallBackLiveData: MutableLiveData<Result<HashMap<String, Float>>> = MutableLiveData()
+    val dateChangeLiveData: MutableLiveData<String> = MutableLiveData()
 
     fun getExchangeRateData(
         selectedDate: String,
@@ -27,7 +28,7 @@ class ExchangeRateViewModel : ViewModel() {
         syncAgain: Boolean = false
     ) {
         if (this::responseModel.isInitialized && !syncAgain) {
-            setResponseData(responseModel, selectedDate)
+            apiCallBackLiveData.value = Result.Success(responseModel.rates?.get(selectedDate))
         } else {
             repository.getExchangeRatesBasedOnDateRange(
                 startDate,
@@ -39,22 +40,16 @@ class ExchangeRateViewModel : ViewModel() {
                     if (response is Result.Success) {
                         response.data?.let {
                             responseModel = it
-                            setResponseData(it, "")
+                            val firstKey = it.rates?.keys?.first()
+                            val selectedDatesData = it.rates?.get(firstKey)
+                            apiCallBackLiveData.value = Result.Success(selectedDatesData)
+                            dateChangeLiveData.value = firstKey
                         }
                     } else if (response is Result.Error) {
                         apiCallBackLiveData.value = response
                     }
                 })
         }
-    }
-
-    private fun setResponseData(responseData: ResponseModel, selectedDate: String) {
-        var selectedDatesData: HashMap<String, Float>? = null
-        if (!TextUtils.isEmpty(selectedDate))
-        selectedDatesData = responseData.rates?.get(selectedDate)
-        else
-            selectedDatesData = responseData.rates?.get(responseData.rates?.keys?.first())
-        apiCallBackLiveData.value = Result.Success(selectedDatesData)
     }
 
 }
