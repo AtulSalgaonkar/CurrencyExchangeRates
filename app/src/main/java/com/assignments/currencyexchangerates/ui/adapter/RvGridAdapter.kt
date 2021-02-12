@@ -1,7 +1,6 @@
 package com.assignments.currencyexchangerates.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.assignments.currencyexchangerates.data.model.ExchangeRate
@@ -15,10 +14,6 @@ class RvGridAdapter : RecyclerView.Adapter<RvGridAdapter.ViewHolder>() {
     fun setData(dataList: ArrayList<ExchangeRate>) {
         this.dataList = dataList
         notifyDataSetChanged()
-    }
-
-    fun getData(): ArrayList<ExchangeRate>? {
-        return dataList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

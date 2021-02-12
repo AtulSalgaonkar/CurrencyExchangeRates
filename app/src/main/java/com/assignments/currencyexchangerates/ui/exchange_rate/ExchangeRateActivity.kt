@@ -23,7 +23,7 @@ class ExchangeRateActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExchangeRateBinding
     private lateinit var viewModel: ExchangeRateViewModel
     private lateinit var adapter: RvGridAdapter
-    private lateinit var dpd: DatePickerDialog
+    private lateinit var datePickerDialog: DatePickerDialog
     private val START_DATE_STR = "2018-01-01"
     private val END_DATE_STR = "2018-09-01"
 
@@ -34,21 +34,17 @@ class ExchangeRateActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(ExchangeRateViewModel::class.java)
 
-        initRecyclerView()
+        initViews()
 
         initObserver()
 
-        binding.retryBtn.setOnClickListener {
-            fetchData("", true)
-        }
-
-        binding.dateEt.setOnClickListener {
-            dpd.show()
-        }
-
         fetchData("", true)
 
-        dpd = DatePickerDialog(
+        setupDatePicker()
+    }
+
+    private fun setupDatePicker() {
+        datePickerDialog = DatePickerDialog(
             this,
             { _, thisYear, thisMonth, thisDay ->
                 val thisMonthVal = thisMonth + 1
@@ -64,17 +60,17 @@ class ExchangeRateActivity : AppCompatActivity() {
                 viewModel.dateChangeLiveData.value = dateStr
             },
             2018,
-            1,
+            0,
             1
         )
 
         val dateStart: Date? = getDateFromString(START_DATE_STR)
         val dateEnd: Date? = getDateFromString(END_DATE_STR)
         dateStart?.let {
-            dpd.datePicker.minDate = it.time
+            datePickerDialog.datePicker.minDate = it.time
         }
         dateEnd?.let {
-            dpd.datePicker.maxDate = it.time
+            datePickerDialog.datePicker.maxDate = it.time
         }
     }
 
@@ -108,7 +104,7 @@ class ExchangeRateActivity : AppCompatActivity() {
                 val year: Int = calDate.get(Calendar.YEAR)
                 val month: Int = calDate.get(Calendar.MONTH)
                 val day: Int = calDate.get(Calendar.DAY_OF_MONTH)
-                dpd.updateDate(year, month, day)
+                datePickerDialog.updateDate(year, month, day)
                 binding.dateEt.setText(dateString)
                 fetchData(dateString, false)
             }
@@ -139,7 +135,7 @@ class ExchangeRateActivity : AppCompatActivity() {
         )
     }
 
-    private fun initRecyclerView() {
+    private fun initViews() {
         adapter = RvGridAdapter()
         binding.recyclerView.itemAnimator = DefaultItemAnimator()
         binding.recyclerView.layoutManager = GridLayoutManager(
@@ -147,5 +143,13 @@ class ExchangeRateActivity : AppCompatActivity() {
             resources.getInteger(R.integer.number_of_grid_items)
         )
         binding.recyclerView.adapter = adapter
+
+        binding.retryBtn.setOnClickListener {
+            fetchData("", true)
+        }
+
+        binding.dateEt.setOnClickListener {
+            datePickerDialog.show()
+        }
     }
 }

@@ -1,7 +1,5 @@
 package com.assignments.currencyexchangerates.ui.viewmodel
 
-import android.text.TextUtils
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.assignments.currencyexchangerates.data.model.ResponseModel

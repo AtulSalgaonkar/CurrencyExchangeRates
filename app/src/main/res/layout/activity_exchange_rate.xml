@@ -83,7 +83,8 @@
             android:cursorVisible="false"
             android:ems="10"
             android:focusable="false"
-            android:inputType="date" />
+            android:inputType="date"
+            android:text="2018-01-01" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
