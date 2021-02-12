@@ -78,15 +78,13 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/date_et"
-            android:foreground="?selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cursorVisible="false"
             android:ems="10"
             android:focusable="false"
             android:inputType="date"
-            android:text="2018-01-01"
-            tools:targetApi="m" />
+            android:text="2018-01-01" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
